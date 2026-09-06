@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supply &amp; Demand Explorer</title>
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --bg: #ffffff;
+    --panel: #f6f7fb;
+    --border: #d8dce6;
+    --demand: #d1495b;
+    --supply: #2b6cb0;
+    --cs: #d1495b;
+    --ps: #2b6cb0;
+    --accent: #275d38;
+    --muted: #5a6072;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #eef0f6;
+      --bg: #14161f;
+      --panel: #1c1f2b;
+      --border: #333750;
+      --muted: #a0a6b8;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 16px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  h1 {
+    font-size: 1.4rem;
+    margin: 0 0 4px;
+  }
+  p.sub { color: var(--muted); margin: 0 0 20px; font-size: 0.95rem; }
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  @media (min-width: 720px) {
+    .layout { grid-template-columns: 300px 1fr; }
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .group { margin-bottom: 18px; }
+  .group:last-child { margin-bottom: 0; }
+  .group h2 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 8px;
+    color: var(--muted);
+  }
+  label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+  label span.val { font-variant-numeric: tabular-nums; color: var(--muted); }
+  input[type="range"] {
+    width: 100%;
+    margin-top: 4px;
+    accent-color: var(--accent);
+  }
+  .demand-row span.val { color: var(--demand); font-weight: 600; }
+  .supply-row span.val { color: var(--supply); font-weight: 600; }
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 0.9rem;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .stat {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .stat .label { font-size: 0.75rem; color: var(--muted); }
+  .stat .value { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  svg { width: 100%; height: auto; display: block; }
+  .legend {
+    display: flex;
+    gap: 18px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    flex-wrap: wrap;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 14px; height: 3px; display: inline-block; border-radius: 2px; }
+  footer { margin-top: 22px; font-size: 0.78rem; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Supply &amp; Demand Explorer</h1>
+  <p class="sub">Linear demand and supply curves. Adjust each curve's two endpoints to shift or rotate it, and watch equilibrium price and quantity update.</p>
+
+  <div class="layout">
+    <div class="panel" id="controls">
+      <div class="group">
+        <h2>Demand</h2>
+        <label class="demand-row">Price at Q = 0 <span class="val" id="dAVal"></span></label>
+        <input type="range" id="dA" min="0" max="100" step="1" value="80">
+        <label class="demand-row">Price at Q = 100 <span class="val" id="dBVal"></span></label>
+        <input type="range" id="dB" min="0" max="100" step="1" value="10">
+      </div>
+      <div class="group">
+        <h2>Supply</h2>
+        <label class="supply-row">Price at Q = 0 <span class="val" id="sAVal"></span></label>
+        <input type="range" id="sA" min="0" max="100" step="1" value="10">
+        <label class="supply-row">Price at Q = 100 <span class="val" id="sBVal"></span></label>
+        <input type="range" id="sB" min="0" max="100" step="1" value="90">
+      </div>
+      <div class="toggle">
+        <input type="checkbox" id="showSurplus" checked>
+        <label for="showSurplus" style="margin:0;">Shade consumer &amp; producer surplus</label>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="label">Equilibrium price P*</div><div class="value" id="pStar">-</div></div>
+        <div class="stat"><div class="label">Equilibrium quantity Q*</div><div class="value" id="qStar">-</div></div>
+        <div class="stat"><div class="label">Consumer surplus</div><div class="value" id="csVal">-</div></div>
+        <div class="stat"><div class="label">Producer surplus</div><div class="value" id="psVal">-</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <svg id="chart" viewBox="0 0 560 460" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="legend">
+        <span><i class="swatch" style="background:var(--demand)"></i>Demand</span>
+        <span><i class="swatch" style="background:var(--supply)"></i>Supply</span>
+      </div>
+    </div>
+  </div>
+
+  <footer>Client-side only &mdash; no data leaves your browser.</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- DOM refs ----
+  var dA = document.getElementById("dA"), dB = document.getElementById("dB");
+  var sA = document.getElementById("sA"), sB = document.getElementById("sB");
+  var showSurplus = document.getElementById("showSurplus");
+  var svg = document.getElementById("chart");
+
+  var W = 560, H = 460;
+  var M = { top: 20, right: 24, bottom: 46, left: 56 }; // plot margins
+  var plotW = W - M.left - M.right;
+  var plotH = H - M.top - M.bottom;
+  var Q_MAX = 100, P_MAX = 100;
+
+  function qToX(q) { return M.left + (q / Q_MAX) * plotW; }
+  function pToY(p) { return M.top + plotH - (p / P_MAX) * plotH; }
+
+  function svgEl(tag, attrs) {
+    var el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+
+  // Demand: line through (0, dA) and (100, dB). Supply: line through (0, sA) and (100, sB).
+  // Both parameterized as P = intercept + slope * Q so we can solve for intersection directly.
+  function lineFromEndpoints(p0, p100) {
+    var slope = (p100 - p0) / Q_MAX;
+    return { intercept: p0, slope: slope };
+  }
+
+  function intersect(d, s) {
+    // d.intercept + d.slope*Q = s.intercept + s.slope*Q
+    var denom = d.slope - s.slope;
+    if (Math.abs(denom) < 1e-9) return null; // parallel, no unique equilibrium
+    var q = (s.intercept - d.intercept) / denom;
+    var p = d.intercept + d.slope * q;
+    return { q: q, p: p };
+  }
+
+  function fmt(n) {
+    return (Math.round(n * 100) / 100).toFixed(2);
+  }
+
+  function render() {
+    var dAv = Number(dA.value), dBv = Number(dB.value);
+    var sAv = Number(sA.value), sBv = Number(sB.value);
+    document.getElementById("dAVal").textContent = "$" + dAv;
+    document.getElementById("dBVal").textContent = "$" + dBv;
+    document.getElementById("sAVal").textContent = "$" + sAv;
+    document.getElementById("sBVal").textContent = "$" + sBv;
+
+    var demand = lineFromEndpoints(dAv, dBv);
+    var supply = lineFromEndpoints(sAv, sBv);
+    var eq = intersect(demand, supply);
+
+    // Clear
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+
+    var cssIsDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var gridColor = cssIsDark ? "#333750" : "#e2e5ee";
+    var axisColor = cssIsDark ? "#a0a6b8" : "#5a6072";
+    var demandColor = "#d1495b";
+    var supplyColor = "#2b6cb0";
+
+    // Gridlines + axis ticks (every 20 units)
+    for (var g = 0; g <= Q_MAX; g += 20) {
+      svg.appendChild(svgEl("line", { x1: qToX(g), y1: M.top, x2: qToX(g), y2: M.top + plotH, stroke: gridColor, "stroke-width": 1 }));
+      var tx = svgEl("text", { x: qToX(g), y: M.top + plotH + 18, "font-size": 11, fill: axisColor, "text-anchor": "middle" });
+      tx.textContent = g;
+      svg.appendChild(tx);
+    }
+    for (var gp = 0; gp <= P_MAX; gp += 20) {
+      svg.appendChild(svgEl("line", { x1: M.left, y1: pToY(gp), x2: M.left + plotW, y2: pToY(gp), stroke: gridColor, "stroke-width": 1 }));
+      var ty = svgEl("text", { x: M.left - 8, y: pToY(gp) + 4, "font-size": 11, fill: axisColor, "text-anchor": "end" });
+      ty.textContent = "$" + gp;
+      svg.appendChild(ty);
+    }
+
+    // Axis labels
+    var xl = svgEl("text", { x: M.left + plotW / 2, y: H - 6, "font-size": 12, fill: axisColor, "text-anchor": "middle" });
+    xl.textContent = "Quantity (Q)";
+    svg.appendChild(xl);
+    var yl = svgEl("text", {
+      x: 14, y: M.top + plotH / 2, "font-size": 12, fill: axisColor, "text-anchor": "middle",
+      transform: "rotate(-90 14 " + (M.top + plotH / 2) + ")"
+    });
+    yl.textContent = "Price (P)";
+    svg.appendChild(yl);
+
+    // Axes
+    svg.appendChild(svgEl("line", { x1: M.left, y1: M.top, x2: M.left, y2: M.top + plotH, stroke: axisColor, "stroke-width": 1.5 }));
+    svg.appendChild(svgEl("line", { x1: M.left, y1: M.top + plotH, x2: M.left + plotW, y2: M.top + plotH, stroke: axisColor, "stroke-width": 1.5 }));
+
+    // Surplus shading (only meaningful when there's a valid equilibrium inside range)
+    if (showSurplus.checked && eq && eq.q >= 0 && eq.q <= Q_MAX && eq.p >= 0 && eq.p <= P_MAX) {
+      var qClamped = Math.max(0, Math.min(Q_MAX, eq.q));
+      var csPathPts = [
+        [qToX(0), pToY(dAv)],
+        [qToX(qClamped), pToY(eq.p)],
+        [qToX(0), pToY(eq.p)]
+      ];
+      var psPathPts = [
+        [qToX(0), pToY(sAv)],
+        [qToX(qClamped), pToY(eq.p)],
+        [qToX(0), pToY(eq.p)]
+      ];
+      svg.appendChild(svgEl("polygon", { points: csPathPts.map(function (p) { return p.join(","); }).join(" "), fill: demandColor, opacity: 0.18 }));
+      svg.appendChild(svgEl("polygon", { points: psPathPts.map(function (p) { return p.join(","); }).join(" "), fill: supplyColor, opacity: 0.18 }));
+    }
+
+    // Demand and supply lines (clip to the P in [0,100] band visually by drawing full then relying on viewBox)
+    svg.appendChild(svgEl("line", { x1: qToX(0), y1: pToY(dAv), x2: qToX(100), y2: pToY(dBv), stroke: demandColor, "stroke-width": 2.5 }));
+    svg.appendChild(svgEl("line", { x1: qToX(0), y1: pToY(sAv), x2: qToX(100), y2: pToY(sBv), stroke: supplyColor, "stroke-width": 2.5 }));
+
+    var dLabel = svgEl("text", { x: qToX(100) - 4, y: pToY(dBv) - 8, "font-size": 12, "font-weight": 700, fill: demandColor, "text-anchor": "end" });
+    dLabel.textContent = "D";
+    svg.appendChild(dLabel);
+    var sLabel = svgEl("text", { x: qToX(100) - 4, y: pToY(sBv) - 8, "font-size": 12, "font-weight": 700, fill: supplyColor, "text-anchor": "end" });
+    sLabel.textContent = "S";
+    svg.appendChild(sLabel);
+
+    // Equilibrium marker + guide lines
+    var hasEq = eq && eq.q >= 0 && eq.q <= Q_MAX && eq.p >= 0 && eq.p <= P_MAX;
+    if (hasEq) {
+      var ex = qToX(eq.q), ey = pToY(eq.p);
+      svg.appendChild(svgEl("line", { x1: ex, y1: ey, x2: ex, y2: M.top + plotH, stroke: axisColor, "stroke-width": 1, "stroke-dasharray": "4,3" }));
+      svg.appendChild(svgEl("line", { x1: M.left, y1: ey, x2: ex, y2: ey, stroke: axisColor, "stroke-width": 1, "stroke-dasharray": "4,3" }));
+      svg.appendChild(svgEl("circle", { cx: ex, cy: ey, r: 5, fill: "#1a1a2e", stroke: "white", "stroke-width": 1.5 }));
+
+      document.getElementById("pStar").textContent = "$" + fmt(eq.p);
+      document.getElementById("qStar").textContent = fmt(eq.q);
+
+      if (showSurplus.checked) {
+        var cs = 0.5 * eq.q * (dAv - eq.p);
+        var ps = 0.5 * eq.q * (eq.p - sAv);
+        document.getElementById("csVal").textContent = "$" + fmt(cs);
+        document.getElementById("psVal").textContent = "$" + fmt(ps);
+      } else {
+        document.getElementById("csVal").textContent = "-";
+        document.getElementById("psVal").textContent = "-";
+      }
+    } else {
+      document.getElementById("pStar").textContent = "no equilibrium in range";
+      document.getElementById("qStar").textContent = "no equilibrium in range";
+      document.getElementById("csVal").textContent = "-";
+      document.getElementById("psVal").textContent = "-";
+    }
+  }
+
+  [dA, dB, sA, sB, showSurplus].forEach(function (el) {
+    el.addEventListener("input", render);
+  });
+  window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+
+  render();
+})();
+</script>
+</body>
+</html>
