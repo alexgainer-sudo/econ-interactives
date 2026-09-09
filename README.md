@@ -31,3 +31,6 @@ Create -> Pages -> Connect to Git -> this repo), with:
 
 - `supply-demand/index.html` — draggable linear demand/supply curves, live equilibrium
   price/quantity, optional consumer/producer surplus shading. Built and verified 2026-09-06.
+- `supply-demand-lab/index.html`: guided prediction, exploration and transfer activity on
+  movements along demand versus demand shifts and simultaneous market changes. Built and
+  verified 2026-09-08.
