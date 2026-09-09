@@ -46,9 +46,17 @@
       transferFeedback:'Both changes lower price. Lower demand reduces quantity, while increased supply raises it. Quantity therefore depends on the relative sizes of the shifts.'
     }
   };
-  let current = 'price', revealed = false, presenting = false;
-  const found = new Set();
   const params = new URLSearchParams(location.search);
+  const profileName = location.pathname.split('/').filter(Boolean)[0];
+  const profiles = {
+    'chapter-5': { cases:['demand','both'], projection:false },
+    lecture: { cases:['price','demand','both'], projection:true },
+    default: { cases:['price'], projection:false }
+  };
+  const profile = profiles[profileName] || profiles.default;
+  const allowedCases = new Set(profile.cases);
+  let current = profile.cases[0], revealed = false, presenting = false;
+  const found = new Set();
   const money = x => '$'+x.toFixed(2);
   const num = x => Number.isInteger(x) ? String(x) : x.toFixed(1);
   function radioOptions(target, name, choices) {
@@ -171,15 +179,20 @@
     event.preventDefault(); const chosen=document.querySelector('input[name=transfer]:checked'); if(!chosen)return;
     const correct=Number(chosen.value)===scenarios[current].transferAnswer;
     $('transfer-feedback').textContent=(correct?'Correct. ':'Reconsider this. ')+scenarios[current].transferFeedback;
-    $('next').hidden=!correct;
-    $('next').textContent=current==='both'?'Review the first case':'Next case →';
+    $('next').hidden=!correct || profile.cases.length===1;
+    $('next').textContent=current===profile.cases.at(-1)?'Review the first case':'Next case →';
   });
-  $('next').addEventListener('click',()=>start(current==='price'?'demand':current==='demand'?'both':'price',true));
+  $('next').addEventListener('click',()=>{
+    const index=profile.cases.indexOf(current);
+    start(profile.cases[(index+1)%profile.cases.length],true);
+  });
   function projection(value) {
     presenting=value; document.body.classList.toggle('present',value); $('present').setAttribute('aria-pressed',String(value));
     $('present').textContent=value?'Leave projection mode':'Projection mode'; start(current);
   }
+  $('present').hidden=!profile.projection;
   $('present').addEventListener('click',()=>projection(!presenting));
-  if(Object.hasOwn(scenarios,params.get('case')))current=params.get('case');
-  projection(params.get('mode')==='present');
+  document.querySelectorAll('[data-case]').forEach(button=>{ button.hidden=!allowedCases.has(button.dataset.case); });
+  if(allowedCases.has(params.get('case')))current=params.get('case');
+  projection(profile.projection && params.get('mode')==='present');
 })();
