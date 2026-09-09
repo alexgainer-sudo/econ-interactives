@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Predict, test and explain changes in a coffee market. A guided supply and demand activity.">
+  <title>What changes in the coffee market?</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="model.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#activity">Skip to activity</a>
+<main>
+  <header>
+    <div><p class="eyebrow">ECON 101 / 102 · A. Gainer · Supply and demand</p><h1>What changes in the coffee market?</h1></div>
+    <div class="toolbar"><button id="present" aria-pressed="false">Projection mode</button><button id="restart">Restart case</button></div>
+  </header>
+  <p class="intro">Make a prediction. Change one thing. Explain what happens.</p>
+  <nav aria-label="Cases" id="cases">
+    <button data-case="price" aria-current="step"><span>01</span> A lower coffee price</button>
+    <button data-case="demand"><span>02</span> More expensive tea</button>
+    <button data-case="both"><span>03</span> Two changes at once</button>
+  </nav>
+  <noscript><p>This activity needs JavaScript. Without it, consider: if demand increases and supply decreases, price rises, but quantity can rise, fall or stay the same. Draw each possibility and explain why.</p></noscript>
+  <div class="workspace" id="activity">
+    <section class="task" aria-labelledby="case-title">
+      <p class="eyebrow" id="step">1 · Predict</p>
+      <h2 id="case-title"></h2><p id="story"></p>
+      <form id="prediction-form">
+        <fieldset id="prediction"><legend id="question"></legend><div id="choices"></div></fieldset>
+        <button class="primary" id="reveal" type="submit">Test my prediction</button>
+      </form>
+      <p id="prediction-feedback" role="status"></p>
+      <section id="experiment" hidden aria-labelledby="experiment-title">
+        <h3 id="experiment-title">2 · Explore</h3>
+        <p id="challenge"></p>
+        <div id="price-control" hidden><label for="price">Coffee price <output id="price-value" for="price"></output></label><input id="price" type="range" min="3" max="7" step="0.5" value="3"></div>
+        <div id="demand-control" hidden><label for="demand">Increase in demand <output id="demand-value" for="demand"></output></label><input id="demand" type="range" min="0" max="30" step="5" value="20"></div>
+        <div id="supply-control" hidden><label for="supply">Decrease in supply <output id="supply-value" for="supply"></output></label><input id="supply" type="range" min="0" max="30" step="5" value="10"></div>
+        <p id="control-note" class="small"></p>
+        <div id="presets" hidden><p class="small">Compare three possibilities:</p><div class="preset-buttons"><button data-d="30" data-s="10">Stronger demand shift</button><button data-d="20" data-s="20">Equal shifts</button><button data-d="10" data-s="30">Stronger supply shift</button></div><p id="found" role="status"></p></div>
+        <details><summary>Explain the result</summary><p id="explanation"></p></details>
+        <button id="advance" class="primary advance" type="button" aria-controls="transfer">Continue to 3 · Try a new situation ↓</button>
+      </section>
+    </section>
+    <section class="visual" aria-labelledby="chart-heading">
+      <div class="chart-header"><h2 id="chart-heading">Before the change</h2><span class="badge" id="chart-badge">Baseline</span></div>
+      <svg id="chart" viewBox="0 0 640 490" role="img" aria-labelledby="graph-title graph-desc"></svg>
+      <p class="legend"><span class="demand-key">D: demand</span><span class="supply-key" id="supply-key">S: supply</span><span id="baseline-key">Dashed curves: before</span></p>
+      <div class="metrics" aria-live="polite" aria-atomic="true"><div><span id="p-label">Price</span><strong id="p-result"></strong></div><div><span id="q-label">Quantity</span><strong id="q-result"></strong></div></div>
+      <p id="reading" class="reading"></p>
+      <div id="chart-controls"></div>
+      <details class="table-details"><summary>Read the graph as a table</summary><table><caption id="table-caption">Before and after</caption><thead><tr><th scope="col">Measure</th><th scope="col">Before</th><th scope="col">Now</th></tr></thead><tbody id="values"></tbody></table></details>
+    </section>
+  </div>
+  <section id="transfer" class="transfer" hidden aria-labelledby="transfer-heading">
+    <p class="eyebrow">3 · Try a new situation</p><h2 id="transfer-heading">Can you use the idea elsewhere?</h2>
+    <form id="transfer-form"><fieldset><legend id="transfer-question"></legend><div id="transfer-choices"></div></fieldset><button type="submit" class="primary">Check my explanation</button></form>
+    <p id="transfer-feedback" role="status"></p>
+    <button id="next" hidden>Next case →</button>
+  </section>
+  <details class="assumptions"><summary>About this model and your work</summary><p>A hypothetical competitive coffee market. Quantity is thousands of cups per day; prices are dollars per cup. Straight lines simplify the illustration. In Cases 2 and 3, all other influences are held fixed, and we compare equilibria after the market adjusts. The model shows possible outcomes, not estimates of a real market.</p><p>Case 1 isolates the quantity demanded at a given price. It does not explain why the market price changed or claim that the chosen price clears the market.</p><p>No sign-in. Answers and progress stay in this open page and reset when you restart, switch cases or reload. This activity does not submit grades or responses to your instructor. If assigned a Top Hat question, answer it separately in Top Hat.</p></details>
+  <footer><span>Created by A. Gainer for ECON 101 / 102 students.</span><span>Practice at your own pace. No timer.</span><a id="standalone" href="index.html" target="_blank" rel="noopener">Open in a separate tab</a></footer>
+</main>
+</body>
+</html>
