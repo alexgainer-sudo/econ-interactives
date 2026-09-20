@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Make a seller's decision, match buyers to goods, and discover what a price ceiling does to actual trades.">
+<title>A price ceiling. Then what? | ECON 101</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+<script src="model.js" defer></script><script src="app.js" defer></script>
+</head>
+<body data-mode="lecture">
+<a href="#activity" class="skip">Skip to activity</a>
+<div class="shell">
+<header><div class="brand">ECON 101 · A. Gainer<br>Price controls</div><div class="tools"><a href="index.html">Independent practice</a><button disabled class="quiet" id="large" aria-pressed="false">Large text</button><button disabled class="quiet" id="restart">Restart</button></div></header>
+<p class="mode" style="margin-top:24px">Lecture activity</p>
+<h1>A price ceiling. Then what?</h1>
+<p class="deck">A lower price attracts buyers. What happens on the seller’s side?</p>
+<ol class="progress" aria-label="Activity progress"><li aria-current="step" id="step-0">01 · Decide as a seller</li><li id="step-1">02 · Match the market</li><li id="step-2">03 · Return to Top Hat</li></ol>
+<noscript><p>This activity needs JavaScript. Here is the model in words: at $5.50, four buyers and four sellers trade. With a $3.50 ceiling, six buyers want boxes but only two sellers cover their costs. Two boxes trade and four willing buyers go without. A ceiling above $5.50 leaves this market unchanged.</p></noscript>
+<main id="activity" class="panel">
+<section id="stage-0" class="stage" aria-labelledby="seller-title">
+<div class="split"><div class="context"><p class="eyebrow">01 / Your decision</p><h2 id="seller-title" tabindex="-1">Which boxes get made?</h2>
+<p>In this fictional market, eight sellers can each prepare <strong>one lunch box today</strong>. None are made yet.</p>
+<div class="baseline">Before the policy<strong>$5.50 per box · 4 boxes sold</strong></div>
+<div class="badge">New legal maximum: $3.50</div>
+<p class="small">All sellers obey the ceiling. Costs include ingredients, packaging and time. Sellers can choose not to make a box.</p></div>
+<div><form id="seller-form"><fieldset><legend>If buyers will pay $3.50, which sellers should prepare a box? Select every seller who can cover their cost.</legend><div class="sellers"><label class="seller"><input type="checkbox" name="seller" value="0" aria-label="Seller 1, cost $2.00"><span class="name">Seller 1 · cost</span><span class="cost">$2.00</span></label>
+<label class="seller"><input type="checkbox" name="seller" value="1" aria-label="Seller 2, cost $3.00"><span class="name">Seller 2 · cost</span><span class="cost">$3.00</span></label>
+<label class="seller"><input type="checkbox" name="seller" value="2" aria-label="Seller 3, cost $4.00"><span class="name">Seller 3 · cost</span><span class="cost">$4.00</span></label>
+<label class="seller"><input type="checkbox" name="seller" value="3" aria-label="Seller 4, cost $5.00"><span class="name">Seller 4 · cost</span><span class="cost">$5.00</span></label>
+<label class="seller"><input type="checkbox" name="seller" value="4" aria-label="Seller 5, cost $6.00"><span class="name">Seller 5 · cost</span><span class="cost">$6.00</span></label>
+<label class="seller"><input type="checkbox" name="seller" value="5" aria-label="Seller 6, cost $7.00"><span class="name">Seller 6 · cost</span><span class="cost">$7.00</span></label>
+<label class="seller"><input type="checkbox" name="seller" value="6" aria-label="Seller 7, cost $8.00"><span class="name">Seller 7 · cost</span><span class="cost">$8.00</span></label>
+<label class="seller"><input type="checkbox" name="seller" value="7" aria-label="Seller 8, cost $9.00"><span class="name">Seller 8 · cost</span><span class="cost">$9.00</span></label></div></fieldset>
+<div class="actions"><button disabled class="primary" type="submit">Check my decisions</button><button disabled class="secondary" type="button" id="to-market" hidden>Meet the buyers →</button></div></form>
+<div class="feedback" id="seller-feedback" role="status"><p>Choose the sellers, then check your decisions. There is no penalty for trying again.</p></div></div></div>
+</section>
+<section id="stage-1" class="stage" aria-labelledby="market-title" hidden>
+<p class="eyebrow">02 / Both sides of the counter</p><h2 id="market-title" tabindex="-1">Wanting a box is only one side of a trade.</h2>
+<p>At the $3.50 price ceiling, <strong>6 buyers want a box</strong> and <strong>2 sellers offer one</strong>. Each buyer wants at most one box.</p>
+<div class="lane"><div class="lane-head"><span>Buyers · maximum willingness to pay</span><span>6 willing</span></div><div class="tokens" id="buyer-tokens"></div></div>
+<div class="lane"><div class="lane-head"><span>Sellers · cost of preparing one box</span><span>2 willing</span></div><div class="tokens" id="seller-tokens"></div></div>
+<p class="small">Coloured cards are willing to trade at $3.50. Grey cards sit out. Before the ceiling, 4 boxes were bought and sold.</p>
+<form id="trade-form"><fieldset><legend>How many boxes can actually be bought and sold now?</legend><div class="choice-row">
+<label class="choice"><input type="radio" name="trades" value="2">2 boxes</label><label class="choice"><input type="radio" name="trades" value="4">4 boxes</label><label class="choice"><input type="radio" name="trades" value="6">6 boxes</label></div></fieldset><div class="actions"><button disabled class="primary" type="submit">Match buyers with boxes</button></div></form>
+<div id="trade-feedback" class="feedback" role="status"><p>Make your prediction before matching the market.</p></div>
+<div id="trade-result" hidden>
+<div class="trade-total"><div class="stat"><span>Actually traded</span><strong>2</strong><span>was 4 boxes</span></div><div class="stat unmet"><span>Willing buyers without a box</span><strong>4</strong><span>the shortage: 6 − 2</span></div><div class="stat"><span>Price per box</span><strong>$3.50</strong><span>was $5.50</span></div></div>
+<p class="bridge"><strong>More buyers want a box. Fewer boxes are sold.</strong> A purchase needs a willing buyer and a willing seller.</p><p class="small">The highlighted buyers are one possible allocation. The model does not decide who gets a box. It assumes both offered boxes find buyers.</p>
+<div class="actions"><button disabled class="primary" id="to-summary">Explain what changed →</button></div></div>
+</section>
+<section id="stage-2" class="stage" aria-labelledby="summary-title" hidden>
+<p class="eyebrow">03 / Put it into words</p><h2 id="summary-title" tabindex="-1">Explain the result.</h2>
+<p class="bridge">Explain to yourself or a neighbour: why can a lower price make more people want to buy, yet lead to fewer purchases?</p>
+<div class="next-card" id="lecture-finish" hidden><h3>Return to your Top Hat question.</h3><p>Use both sides of the market when you vote again. Be ready to explain your reasoning.</p><p class="small">This page does not send your answer to Top Hat. Submit it there.</p></div>
+<div id="practice-continue" hidden><p>Now check a different possibility: <strong>what if the legal maximum is above the original market price?</strong></p></div>
+<details id="explore-details"><summary>Explore the graph and a different ceiling</summary>
+<div class="explorer"><div class="cap-control"><label class="range-label" for="ceiling">Set the legal maximum <output id="cap-output" for="ceiling">$3.50</output></label><input id="ceiling" type="range" min="2.5" max="7.5" step="1" value="3.5" aria-valuetext="$3.50"><div class="range-ends"><span>$2.50</span><span>$7.50</span></div></div>
+<div class="explore-grid"><div><svg id="chart" class="chart" viewBox="0 0 640 420" role="img" aria-labelledby="chart-title chart-desc"><title id="chart-title">Supply, demand and the price ceiling</title><desc id="chart-desc">The graph is accompanied by a numerical table.</desc></svg><div class="legend"><span class="d">Demand</span><span>Supply</span><span class="c">Legal maximum</span></div><p class="small">The steps represent individual buyers and sellers. Their willingness to pay and costs do not change when you move the ceiling.</p></div><div>
+<div id="market-readout" class="readout" role="status"></div>
+<table><caption>At this legal maximum</caption><tbody><tr><th scope="row">Actual price</th><td id="table-price"></td></tr><tr><th scope="row">Quantity demanded</th><td id="table-demand"></td></tr><tr><th scope="row">Quantity supplied</th><td id="table-supply"></td></tr><tr><th scope="row">Actually traded</th><td id="table-trades"></td></tr><tr><th scope="row">Shortage</th><td id="table-shortage"></td></tr></tbody></table>
+</div></div></div></details>
+<div id="practice-tests" hidden>
+<form id="nonbinding-form" style="margin-top:24px"><fieldset><legend>If the ceiling is $7.50, what price will buyers pay in this model?</legend><div class="choice-row"><label class="choice"><input type="radio" name="nonbinding" value="cap">$7.50</label><label class="choice"><input type="radio" name="nonbinding" value="market">$5.50</label><label class="choice"><input type="radio" name="nonbinding" value="oldcap">$3.50</label></div></fieldset><div class="actions"><button disabled type="submit" class="primary">Check the price</button><button disabled type="button" class="secondary" id="to-transfer" hidden>Try a new market →</button></div></form><div id="nonbinding-feedback" class="feedback" role="status"><p>A maximum is a limit on what sellers may charge. Does it require them to charge that amount?</p></div>
+</div>
+</section>
+<section id="stage-3" class="stage" aria-labelledby="transfer-title" hidden>
+<p class="eyebrow">Independent practice / A new market</p><h2 id="transfer-title" tabindex="-1">From lunch boxes to bicycle repairs.</h2><p>A fictional repair market starts with <strong>8 repairs per day at $40 each</strong>. A $25 price ceiling is enforced. After repair shops adjust:</p>
+<table><caption>At $25 per repair</caption><tbody><tr><th scope="row">Repairs customers want to buy</th><td>12 per day</td></tr><tr><th scope="row">Repairs shops are willing to provide</th><td>5 per day</td></tr></tbody></table>
+<p>Assume every repair offered finds a customer. Other influences on supply and demand are unchanged.</p>
+<form id="transfer-form"><fieldset><legend>Which prediction and explanation fit this market?</legend><div class="choice-stack">
+<label class="choice"><input type="radio" name="transfer" value="demand">12 repairs happen because the lower price attracts more customers.</label>
+<label class="choice"><input type="radio" name="transfer" value="shortage">7 repairs happen because 12 minus 5 equals 7.</label>
+<label class="choice"><input type="radio" name="transfer" value="supply">5 repairs happen because customers can only buy the repairs shops provide.</label>
+<label class="choice"><input type="radio" name="transfer" value="baseline">8 repairs happen because that was the original quantity traded.</label></div></fieldset><div class="actions"><button disabled class="primary" type="submit">Check my reasoning</button></div></form>
+<div id="transfer-feedback" class="feedback" role="status"><p>Use the two sides of the market to explain your choice.</p></div>
+<div id="complete" class="next-card" hidden><h3>You have worked through the mechanism.</h3><p>At a binding ceiling, quantity demanded can rise while the number actually traded falls. The shortage counts willing buyers left without the good, not completed trades.</p><p>A ceiling above the market-clearing price does not bind. It leaves the price and trades unchanged in this model.</p><div class="actions"><button disabled class="secondary" id="back-explore">Return to the graph</button></div></div>
+</section>
+</main>
+<footer><details><summary>Model assumptions and your work</summary><p>This fictional competitive market has eight buyers and eight sellers. Each buyer wants at most one box and each seller can prepare at most one. Sellers cover all avoidable costs, including their time. Prices in the controls avoid exact indifference. Without a binding ceiling, we keep the starting market-clearing price of $5.50; other prices between $5 and $6 also clear this discrete market.</p><p>The ceiling is enforced. Costs and willingness to pay stay fixed. There are no side payments, quality changes, government purchases or matching frictions. Every offered box finds a willing buyer at the binding ceiling. Sellers can adjust how many boxes they prepare; this is not a model of a fixed stock of goods already produced.</p><p>No sign-in or timer. Your choices stay in this open page, are not submitted to your instructor, and reset on restart or reload. This activity stores no answers or student identifiers and contains no analytics script. Answer assigned questions separately in Top Hat.</p></details><p style="margin-top:18px">Created by A. Gainer · ECON 101 / 102 · Practice, explain, then apply.</p><a class="standalone" href="lecture.html" target="_blank" rel="noopener">Open this activity in a separate tab</a></footer>
+</div>
+</body></html>
