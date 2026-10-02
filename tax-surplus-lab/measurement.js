@@ -1,6 +1,6 @@
 /* Configure only after deploying and verifying the collector. No browser storage. */
 (() => {
- const RELEASE='tax-2026-10-02-v3';
+ const RELEASE='tax-2026-10-02-v4';
  const ENDPOINT='https://econ-tax-activity-counts.alex-gainer.workers.dev/event'; // Production aggregate collector.
  const route=document.body.dataset.mode;
  let seen=new Set();
